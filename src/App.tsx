@@ -40,7 +40,7 @@ export function App() {
           );
         })}
       </div>
-      <PageSelector props={{ totalPages, setPage }} />
+      <PageSelector props={{ totalPages, page, setPage }} />
     </div>
   );
 }

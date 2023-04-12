@@ -1,14 +1,15 @@
-import { CSSProperties, memo } from "react";
+import { CSSProperties } from "react";
 
 type PageSelectorProps = {
   props: {
     totalPages: number;
+    page: number;
     setPage: Function;
   };
 };
 
-function PageSelector({ props }: PageSelectorProps) {
-  const { totalPages, setPage } = props;
+export default function PageSelector({ props }: PageSelectorProps) {
+  const { totalPages, page, setPage } = props;
 
   function fillArray(size: number) {
     const array = new Array<number>(size);
@@ -18,9 +19,7 @@ function PageSelector({ props }: PageSelectorProps) {
     return array;
   }
 
-  function f() {
-    
-  }
+  function f() {}
 
   const pagesNumbers = fillArray(totalPages);
 
@@ -29,31 +28,72 @@ function PageSelector({ props }: PageSelectorProps) {
   }
 
   type css = {
-    page: CSSProperties;
+    numberOfPage: CSSProperties;
     selector: CSSProperties;
+    selected: CSSProperties;
   };
 
   const style: css = {
-    page: { cursor: "pointer" },
-    selector: { display: "flex", flexDirection: "row", gap: "40px" },
+    numberOfPage: {
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      height: "50px",
+      width: "50px",
+    },
+    selector: {
+      display: "flex",
+      alignItems: "center",
+      flexDirection: "row",
+      gap: "20px",
+    },
+    selected: {
+      fontWeight: "bold",
+      fontSize: "22px",
+    },
   };
+
+  const paginationLessThan11 = pagesNumbers.map((numberOfPage) => {
+    return (
+      <div
+        style={
+          numberOfPage === page
+            ? { ...style.numberOfPage, ...style.selected }
+            : { ...style.numberOfPage }
+        }
+        key={numberOfPage}
+        onClick={() => handleClickPage(numberOfPage)}
+      >
+        {numberOfPage}
+      </div>
+    );
+  });
+
+  const paginationGreaterThan10 = (
+    <>
+      {pagesNumbers.map((numberOfPage, index) => {
+        return index < 11 ? (
+          <div
+            style={
+              numberOfPage === page
+                ? { ...style.numberOfPage, ...style.selected }
+                : { ...style.numberOfPage }
+            }
+            key={numberOfPage}
+            onClick={() => handleClickPage(numberOfPage)}
+          >
+            {numberOfPage}
+          </div>
+        ) : null;
+      })}
+    </>
+  );
 
   return (
     <div style={style.selector}>
-      {pagesNumbers.map((page) => {
-        return (
-          <span
-            style={style.page}
-            key={page}
-            onClick={() => handleClickPage(page)}
-          >
-            {page}
-          </span>
-        );
-      })}
+      {pagesNumbers.length < 11
+        ? paginationLessThan11
+        : paginationGreaterThan10}
     </div>
   );
 }
-
-export default memo(PageSelector);
-
